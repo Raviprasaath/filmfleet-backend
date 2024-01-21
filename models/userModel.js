@@ -13,6 +13,10 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
         required: [true, "Please add the password"],
+    },
+    watchlist: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MovieDeckWatchLists',
     }
 }, 
     {

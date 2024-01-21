@@ -1,15 +1,12 @@
 const mongoose = require('mongoose');
 
-const watchListSchema = new mongoose.Schema({
-    detail: {
-        type : mongoose.Schema.Types.Mixed,
+const watchListUserSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MovieDeckUserInfo',
         required: true,
-        unique: true
-    }
-}, 
-    {
-        timestamps: true
-    }
-);
+    },
+    details: [{ type: mongoose.Schema.Types.Mixed }],
+});
 
-module.exports = mongoose.model("MovieDeckWatchLists", watchListSchema)
+module.exports = mongoose.model("MovieDeckWatchLists", watchListUserSchema);

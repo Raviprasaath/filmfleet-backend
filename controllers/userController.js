@@ -1,10 +1,10 @@
 const userModel = require("../models/userModel");
+const watchListModel = require("../models/watchLaterModel");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const getRegisterDetails = async (req, res) => {
     try {
-        console.log("body checking ", req.body);
         const { username, email, password } = req.body;
         
         if (!username || !email || !password) {
@@ -25,7 +25,16 @@ const getRegisterDetails = async (req, res) => {
         });
 
         if (newUser) {
-            return res.status(201).json({_id: newUser.id, email: newUser.email});
+            const newWatchlist = await watchListModel.create({
+                user: newUser._id,
+                details: [],
+            });
+
+            return res.status(201).json({
+                _id: newUser.id,
+                email: newUser.email,
+                watchlist: newWatchlist._id,
+            });
         } else {
             return res.status(400).json("User Data invalid");
         }
@@ -37,7 +46,6 @@ const getRegisterDetails = async (req, res) => {
 
 const getLogInDetails = async (req, res) => {
     try {
-        console.log("login body checking ", req.body);
         const { email, password } = req.body;
 
         if (!email || !password) {
@@ -55,7 +63,7 @@ const getLogInDetails = async (req, res) => {
                 }
             }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "50m" });
 
-            return res.status(200).json({ accessToken, email });
+            return res.status(200).json({ accessToken, email, userId: user._id });
         } else {
             return res.status(401).json("Email or Password invalid");
         }
